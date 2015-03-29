@@ -161,6 +161,11 @@ class IRCParser() extends Actor {
           val word2 = linesp(startIdx + 2)
 
           sender ! IRC_Response(toChat(Smidbot.mcg.genSentence(word1, word2), channel))
+        } else if (linesp.size > startIdx + 1) {
+          val word1 = Smidbot.mcg.SENTENCE_START
+          val word2 = linesp(startIdx + 1)
+
+          sender ! IRC_Response(toChat(Smidbot.mcg.genSentence(word1, word2), channel))
         } else {
           sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentence(), channel))
         }
