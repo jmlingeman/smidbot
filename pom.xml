@@ -27,7 +27,7 @@
                     <launchers>
                         <launcher>
                             <id>run</id>
-                            <mainClass>smidbot.smidbot</mainClass>
+                            <mainClass>smidbot.Smidbot</mainClass>
                             <!-- jvmArgs are optional -->
                             <jvmArgs>
                                 <jvmArg>-Xmx2G</jvmArg>
