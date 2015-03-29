@@ -22,6 +22,8 @@ object Smidbot {
   val name: String = "Smidbot"
   println(name + " is alive!")
 
+  val mcg = new MarkovChainGeneration("log.csv")
+
 
 
   def main(args: Array[String]) {
@@ -134,7 +136,7 @@ class IRCParser() extends Actor {
 
   def receive = {
     case message: IRC_Message =>
-      var channel = "#geekboy"
+      val channel = Smidbot.homeChannel
       // if ( (message.message contains "#geekboy") )
       //    channel = "#geekboy"
       //else
@@ -145,16 +147,20 @@ class IRCParser() extends Actor {
       //if (( line contains "timmaha") || (line contains "timanus") || (line contains "timshark")) {
 
       //}
-      if ((line contains "repostbot") && (line contains "--")) {
-        sender ! IRC_Response(toChat("Fuck off, repostbot.", channel))
+      if (line contains "smidbot test") {
+        sender ! IRC_Response(toChat("SMIDBOT IS BEING TESTED EEEEE", channel))
       }
       else if (line contains "!gensentence") {
         val linesp = line.split(" ")
         val startIdx = linesp.indexWhere(x => x == "!gensentence")
+        println("Sending sentence")
         if(linesp.size > startIdx + 2) {
           val word1 = linesp(startIdx + 1)
           val word2 = linesp(startIdx + 2)
 
+          sender ! IRC_Response(toChat(Smidbot.mcg.genSentence(word1, word2), channel))
+        } else {
+          sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentence(), channel))
         }
       }
       else {
