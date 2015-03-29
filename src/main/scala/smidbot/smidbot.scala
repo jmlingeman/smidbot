@@ -22,7 +22,7 @@ object Smidbot {
   val name: String = "Smidbot"
   println(name + " is alive!")
 
-  val mcg = new MarkovChainGeneration("log.csv")
+  val mcg = new MarkovChainGeneration("geekboy_dump.2015.03.28")
 
 
 

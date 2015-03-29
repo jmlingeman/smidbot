@@ -19,7 +19,7 @@ class MarkovChainGeneration(filename: String) {
 
 //    val wordMap = new HashMap[String, HashMap[String, Int].withDefaultValue(0)]
 
-    // Format is time,server,chan,nick,user,action,msg,uts
+    // Last slot is msg slot
     val msgPosition = 6
 
     val file = Source.fromFile(filename)
@@ -27,8 +27,9 @@ class MarkovChainGeneration(filename: String) {
 
     println("Building word list")
     val wordLists = lines.par.map { x =>
-      val linesp = x.split(",")
-      val msg = if(linesp.length == 8) linesp(6) else linesp.slice(6, linesp.length-2).mkString(" ")
+      val linesp = x.split("\t")
+      val msg = linesp.last
+//      val msg = if(linesp.length == 8) linesp(6) else linesp.slice(6, linesp.length-2).mkString(" ")
       val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(3).toSeq
 
       if(wl.size > 0 && wl.last.size == 3 && wl(0).size == 3)
