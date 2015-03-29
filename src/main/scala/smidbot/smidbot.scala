@@ -18,7 +18,7 @@ case class Concert_Lookup(band: String, zip: String, results: String)
 object Smidbot {
   val ircBotNick = "smidbot"
   val ircBotDescription = "smidget's bot"
-  val homeChannel = "#bottest"
+  val homeChannel = "#geekboy"
   val name: String = "Smidbot"
   println(name + " is alive!")
 
