@@ -141,8 +141,9 @@ class IRCParser() extends Actor {
       //    channel = "#geekboy"
       //else
 //        channel = message.message.substring(1, message.message.indexOf("!")).trim
-      val line = message.message.toLowerCase
+      val line = message.message
       println("GOT MESSAGE!!!")
+      println("MSG: ", line)
       println("CHANNEL =" + channel)
       //if (( line contains "timmaha") || (line contains "timanus") || (line contains "timshark")) {
 
