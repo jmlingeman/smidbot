@@ -144,11 +144,12 @@ class IRCParser() extends Actor {
       val line = message.message
       println("GOT MESSAGE!!!")
       println("MSG: ", line)
-      println("CHANNEL =" + channel)
+      println("CHANNEL is currently set to " + channel)
       //if (( line contains "timmaha") || (line contains "timanus") || (line contains "timshark")) {
 
       //}
       if (line contains "smidbot test") {
+        println("Testing smidbot")
         sender ! IRC_Response(toChat("SMIDBOT IS BEING TESTED EEEEE", channel))
       }
       else if (line contains "!gensentence") {
