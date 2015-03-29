@@ -140,7 +140,7 @@ class IRCParser() extends Actor {
       // if ( (message.message contains "#geekboy") )
       //    channel = "#geekboy"
       //else
-      //  channel = message.message.substring(1, message.message.indexOf("!")).trim
+//        channel = message.message.substring(1, message.message.indexOf("!")).trim
       val line = message.message.toLowerCase
       println("GOT MESSAGE!!!")
       println("CHANNEL =" + channel)
@@ -151,9 +151,9 @@ class IRCParser() extends Actor {
         sender ! IRC_Response(toChat("SMIDBOT IS BEING TESTED EEEEE", channel))
       }
       else if (line contains "!gensentence") {
-        val linesp = line.split(" ")
-        val startIdx = linesp.indexWhere(x => x == "!gensentence")
         println("Sending sentence")
+        val linesp = line.split(" ")
+        val startIdx = linesp.indexWhere(x => x.contains("!gensentence"))
         if(linesp.size > startIdx + 2) {
           val word1 = linesp(startIdx + 1)
           val word2 = linesp(startIdx + 2)
