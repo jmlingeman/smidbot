@@ -2,10 +2,9 @@ package smidbot
 
 import java.io._
 import java.net._
-import java.util._
-import akka.routing.{RoundRobinPool, Router, RoundRobinRoutingLogic}
 
-import akka.actor.{Props, ActorSystem, Actor}
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.routing.RoundRobinPool
 
 case class IRC_Message(message: String)
 
@@ -151,6 +150,26 @@ class IRCParser() extends Actor {
       if (line contains "smidbot test") {
         println("Testing smidbot")
         sender ! IRC_Response(toChat("SMIDBOT IS BEING TESTED EEEEE", channel))
+      }
+      else if (line contains "!gensentence3") {
+        println("Sending sentence")
+        val linesp = line.split(" ")
+        val startIdx = linesp.indexWhere(x => x.contains("!gensentence3"))
+        if(linesp.size > startIdx + 3) {
+          val word1 = linesp(startIdx + 1)
+          val word2 = linesp(startIdx + 2)
+          val word3 = linesp(startIdx + 3)
+
+          sender ! IRC_Response(toChat(Smidbot.mcg.genSentence3(word1, word2, word3), channel))
+        } else if (linesp.size > startIdx + 2) {
+          val word1 = Smidbot.mcg.SENTENCE_START
+          val word2 = linesp(startIdx + 1)
+          val word3 = linesp(startIdx + 2)
+
+          sender ! IRC_Response(toChat(Smidbot.mcg.genSentence3(word1, word2, word3), channel))
+        } else {
+          sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentence3(), channel))
+        }
       }
       else if (line contains "!gensentence") {
         println("Sending sentence")
