@@ -161,7 +161,7 @@ class MarkovChainGeneration(filename: String) {
 
   def genSentence3(w1: String, w2: String, w3: String, maxChars:Int = 200): String = {
 
-    var sentence = if(w1 != SENTENCE_START) w1 + " " else ""
+    var sentence = if(w1 != SENTENCE_START) w1 + " " else w2 + " "
     var lastToken = w1
     var middleToken = w2
     var selectedToken = w3
