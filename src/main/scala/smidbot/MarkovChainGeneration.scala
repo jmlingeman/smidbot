@@ -2,6 +2,7 @@ package smidbot
 
 import scala.collection.mutable.HashMap
 import scala.collection.parallel.ParSeq
+import scala.collection.parallel.ParMap
 import scala.io.Source
 import scala.util.Random
 
@@ -39,7 +40,8 @@ class MarkovChainGeneration(filename: String) {
     }.flatten.filter(x => x.size == 3)
 
     println("Building word map")
-    val wordMap = wordLists.groupBy{ x => (x(0), x(1))}.map{ x=> x._1 -> x._2.map(y => y(2))}.withDefaultValue(ParSeq[String]())
+    val wordMap = wordLists.groupBy{ x => (x(0), x(1))}.map{ x=> x._1 -> x._2.groupBy(y => y(0)).map(y => y._1 -> y._2.size).toMap}
+      .withDefaultValue(ParMap[String, Int]())
     file.close()
 
     wordMap
@@ -59,7 +61,21 @@ class MarkovChainGeneration(filename: String) {
         selectedToken = SENTENCE_END
       } else {
         lastToken = selectedToken
-        selectedToken = newTokens(random.nextInt(newTokens.size))
+        val sum = newTokens.map(x => x._2).sum
+        val idx = random.nextInt(sum)
+
+        // Now have to map this idx to a word
+        var count = 0
+        var token = ""
+        var lastIdx = 0
+        val t = newTokens.toStream.takeWhile(_ => count < idx).foreach{
+          x =>
+            count += x._2
+            if(count < idx)
+              token = x._1
+        }
+
+        selectedToken = token
       }
 
     }
