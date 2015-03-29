@@ -7,12 +7,26 @@
     <groupId>smidget</groupId>
     <artifactId>smidbot</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <properties>
+        <scala.version>2.11.5</scala.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.11</artifactId>
             <version>2.3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala.version}</version>
         </dependency>
 
     </dependencies>
@@ -36,7 +50,7 @@
 
                         <launcher>
                             <id>testMarkov</id>
-                            <mainClass>smidbot.MarkovChainGeneration$</mainClass>
+                            <mainClass>smidbot.MarkovChainGeneration</mainClass>
                             <!-- jvmArgs are optional -->
                             <jvmArgs>
                                 <jvmArg>-Xmx2G</jvmArg>
