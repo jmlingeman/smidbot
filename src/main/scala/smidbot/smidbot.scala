@@ -6,6 +6,7 @@ import java.net._
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.routing.RoundRobinPool
 
+import scala.io.Source
 import scala.util.Random
 
 case class IRC_Message(message: String)
@@ -26,7 +27,17 @@ object Smidbot {
 
   val mcg = new MarkovChainGeneration("geekboy_dump.2015.03.28")
 
+  lazy val ps: Stream[Int] = 2 #:: Stream.from(3).filter(i =>
+    ps.takeWhile{j => j * j <= i}.forall{ k => i % k > 0})
+  var lastPrimeGenerated = Source.fromFile("prime.txt").mkString.toInt
 
+  def genNextPrime(): Int = {
+    lastPrimeGenerated += 1
+    val pw = new PrintWriter("prime.txt")
+    pw.write(lastPrimeGenerated.toString)
+    pw.close()
+    ps(lastPrimeGenerated)
+  }
 
   def main(args: Array[String]) {
     val ircpoll = new IRCPoll(ircBotNick, ircBotDescription, homeChannel)
@@ -218,6 +229,9 @@ class IRCParser() extends Actor {
         } else {
           sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentenceBible(), channel))
         }
+      }
+      else if (line contains "primetime") {
+        sender ! IRC_Response(toChat(Smidbot.genNextPrime().toString, channel))
       }
       else {
         //sender ! IRC_Response(toChat("penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis", "arcbot"))
