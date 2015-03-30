@@ -29,7 +29,7 @@ object Smidbot {
 
   lazy val ps: Stream[Int] = 2 #:: Stream.from(3).filter(i =>
     ps.takeWhile{j => j * j <= i}.forall{ k => i % k > 0})
-  var lastPrimeGenerated = Source.fromFile("prime.txt").mkString.toInt
+  var lastPrimeGenerated = Source.fromFile("prime.txt").mkString.stripLineEnd.toInt
 
   def genNextPrime(): Int = {
     lastPrimeGenerated += 1
