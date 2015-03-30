@@ -6,6 +6,8 @@ import java.net._
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.routing.RoundRobinPool
 
+import scala.util.Random
+
 case class IRC_Message(message: String)
 
 case class IRC_Response(response: String)
@@ -20,6 +22,7 @@ object Smidbot {
   val homeChannel = "#geekboy"
   val name: String = "Smidbot"
   println(name + " is alive!")
+  val random = new Random()
 
   val mcg = new MarkovChainGeneration("geekboy_dump.2015.03.28")
 
@@ -150,6 +153,15 @@ class IRCParser() extends Actor {
       if (line contains "smidbot test") {
         println("Testing smidbot")
         sender ! IRC_Response(toChat("SMIDBOT IS BEING TESTED EEEEE", channel))
+      }
+      else if (line.contains(Smidbot.ircBotNick + ":") || line.contains(Smidbot.ircBotNick + ",")) {
+        val msg = line.split(":").toSeq.last
+        val msgSp = msg.split(" ")
+
+        val idx1 = Smidbot.random.nextInt(msgSp.size-1)
+        val idx2 = idx1+1
+
+        sender ! IRC_Response(toChat(Smidbot.mcg.genSentence(msgSp(idx1), msgSp(idx2)), channel))
       }
       else if (line contains "!gensentence3") {
         println("Sending sentence")
