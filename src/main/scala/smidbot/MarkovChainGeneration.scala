@@ -16,7 +16,7 @@ class MarkovChainGeneration(filename: String) {
 
   val wordMapBible = loadGutenberg("data/bible.txt")
 
-  val wordMap = loadAndParseAlexLog(filename)
+  val (wordMap, wordMapByNick) = loadAndParseAlexLog(filename)
   val wordMap3 = loadAndParseAlexLog3(filename)
 
   def loadGutenberg(filename: String) = {
@@ -91,32 +91,49 @@ class MarkovChainGeneration(filename: String) {
 
     println("Building word list")
     val wordMap = new mutable.HashMap[(String, String), mutable.Map[String, Int]]().withDefaultValue(new mutable.HashMap[String, Int]().withDefaultValue(0))
+    val wordMapByNick = new mutable.HashMap[String, mutable.Map[(String, String), mutable.Map[String, Int]]]()
+      .withDefaultValue(new mutable.HashMap[(String, String), mutable.Map[String, Int]]().withDefaultValue(new mutable.HashMap[String, Int]().withDefaultValue(0)))
     lines.map { x =>
       val linesp = x.split("\t")
-      val msg = linesp.last
+      if(linesp.size > 4) {
 
-      val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(3).toSeq.filter(x => x.size == 3)
-      val triples = if(wl.size > 0)
-        wl ++ Seq(Seq(wl.last(1), wl.last(2), SENTENCE_END)) ++ Seq(Seq(SENTENCE_START, wl(0)(0), wl(0)(1)))
-      else
-        wl
+        val msg = linesp.last
+        val nick = linesp(3)
 
-      triples.foreach{x =>
-//        println(x)
-        val tuple = (x(0), x(1))
-        if(!wordMap.contains(tuple)) {
-          wordMap.put(tuple, new mutable.HashMap[String, Int]().withDefaultValue(0))
+        if(!wordMapByNick.contains(nick)) {
+          wordMapByNick.put(nick, new mutable.HashMap[(String, String), mutable.Map[String, Int]]()
+            .withDefaultValue(new mutable.HashMap[String, Int]().withDefaultValue(0)))
         }
-        wordMap(tuple).put(x(2), wordMap(tuple)(x(2)) + 1)
 
-//        wordMap((x(0), x(1))).put(x(2), wordMap((x(0), x(1)))(x(2)) + 1)
+
+        val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(3).toSeq.filter(x => x.size == 3)
+        val triples = if (wl.size > 0)
+          wl ++ Seq(Seq(wl.last(1), wl.last(2), SENTENCE_END)) ++ Seq(Seq(SENTENCE_START, wl(0)(0), wl(0)(1)))
+        else
+          wl
+
+        triples.foreach { x =>
+          //        println(x)
+          val tuple = (x(0), x(1))
+          if (!wordMap.contains(tuple)) {
+            wordMap.put(tuple, new mutable.HashMap[String, Int]().withDefaultValue(0))
+          }
+          if (!wordMapByNick(nick).contains(tuple)) {
+            wordMapByNick(nick).put(tuple, new mutable.HashMap[String, Int]().withDefaultValue(0))
+          }
+          wordMap(tuple).put(x(2), wordMap(tuple)(x(2)) + 1)
+          wordMapByNick(nick)(tuple).put(x(2), wordMap(tuple)(x(2)) + 1)
+
+
+          //        wordMap((x(0), x(1))).put(x(2), wordMap((x(0), x(1)))(x(2)) + 1)
+        }
       }
 
     }
 
     file.close()
 
-    wordMap
+    (wordMap, wordMapByNick)
   }
 
   def loadAndParseAlexLog3(filename: String) = {
@@ -184,6 +201,46 @@ class MarkovChainGeneration(filename: String) {
         }
 
 //        println(count)
+
+        selectedToken = token
+      }
+
+    }
+
+    sentence
+  }
+
+  def genNickSentence(nick: String, w1: String, w2: String, maxChars:Int = 200): String = {
+
+    var sentence = if(w1 != SENTENCE_START) w1 + " " else ""
+    var lastToken = w1
+    var selectedToken = w2
+    while(selectedToken != SENTENCE_END && sentence.size < maxChars) {
+      //      lastToken = selectedToken
+      if(selectedToken != SENTENCE_START)
+        sentence = sentence + selectedToken + " "
+      val newTokens = wordMapByNick(nick)((lastToken, selectedToken))
+      if(newTokens.size == 0) {
+        selectedToken = SENTENCE_END
+      } else {
+        lastToken = selectedToken
+        val sum = newTokens.map(x => x._2).sum
+        val idx = random.nextInt(sum) + 1
+
+        //        println(sum, idx, newTokens)
+
+        // Now have to map this idx to a word
+        var count = 0
+        var token = ""
+        var lastIdx = 0
+        val t = newTokens.toStream.takeWhile(_ => count < idx).foreach{
+          x =>
+            count += x._2
+            //            if(count < idx)
+            token = x._1
+        }
+
+        //        println(count)
 
         selectedToken = token
       }
@@ -281,6 +338,12 @@ class MarkovChainGeneration(filename: String) {
     words
   }
 
+  def getNickStartingWords(nick: String): (String, String) = {
+    val startingWords = wordMapByNick(nick).keys.filter(x => x._1 == SENTENCE_START)
+    val words = startingWords.toSeq(random.nextInt(startingWords.size))
+    words
+  }
+
   def getStartingWordsBible(): (String, String) = {
     val startingWords = wordMapBible.keys.filter(x => x._1 == SENTENCE_START)
     val words = startingWords.toSeq(random.nextInt(startingWords.size))
@@ -296,6 +359,15 @@ class MarkovChainGeneration(filename: String) {
   def genRandomSentence(): String = {
     val words = getStartingWords()
     genSentence(words._1, words._2)
+  }
+
+  def genRandomNickSentence(nick: String): String = {
+    val words = getNickStartingWords(nick)
+    genNickSentence(nick, words._1, words._2)
+  }
+
+  def genRandomNick(): String = {
+    wordMapByNick.keys.toSeq(random.nextInt(wordMapByNick.keys.size))
   }
 
   def genRandomSentenceBible(): String = {

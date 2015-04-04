@@ -194,7 +194,7 @@ class IRCParser() extends Actor {
           sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentence3(), channel))
         }
       }
-      else if (line contains "!gensentence") {
+      else if (line.contains("!gensentence") || line.contains("!gs")) {
         println("Sending sentence")
         val linesp = line.split(" ")
         val startIdx = linesp.indexWhere(x => x.contains("!gensentence"))
@@ -212,7 +212,28 @@ class IRCParser() extends Actor {
           sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentence(), channel))
         }
       }
-      else if (line contains "!genbiblesentence") {
+      else if (line.contains("!gennicksentence") || line.contains("!gns")) {
+        println("Sending sentence")
+        val linesp = line.split(" ")
+        val startIdx = linesp.indexWhere(x => x.contains("!gensentence"))
+        if(linesp.size > startIdx + 2) {
+          val nick = linesp(startIdx + 1)
+          val word1 = linesp(startIdx + 2)
+          val word2 = linesp(startIdx + 3)
+
+          sender ! IRC_Response(toChat(s"<$nick> " + Smidbot.mcg.genNickSentence(nick, word1, word2), channel))
+        } else if (linesp.size > startIdx + 1) {
+          val nick = linesp(startIdx + 1)
+          val word1 = Smidbot.mcg.SENTENCE_START
+          val word2 = linesp(startIdx + 2)
+
+          sender ! IRC_Response(toChat(s"<$nick> " + Smidbot.mcg.genNickSentence(nick, word1, word2), channel))
+        } else {
+          val nick = Smidbot.mcg.genRandomNick()
+          sender ! IRC_Response(toChat(s"<$nick> " + Smidbot.mcg.genRandomNickSentence(nick), channel))
+        }
+      }
+      else if (line.contains("!genbiblesentence") || line.contains("!gbs")) {
         println("Sending sentence")
         val linesp = line.split(" ")
         val startIdx = linesp.indexWhere(x => x.contains("!genbiblesentence"))
