@@ -174,10 +174,10 @@ class IRCParser() extends Actor {
 
         sender ! IRC_Response(toChat(Smidbot.mcg.genSentence(msgSp(idx1), msgSp(idx2)), channel))
       }
-      else if (line contains "!gensentence3") {
+      else if (line.contains("!gensentence3") || line.contains("!gs3")) {
         println("Sending sentence")
         val linesp = line.split(" ")
-        val startIdx = linesp.indexWhere(x => x.contains("!gensentence3"))
+        val startIdx = linesp.indexWhere(x => x.contains("!gensentence3") || x.contains("!gs3"))
         if(linesp.size > startIdx + 3) {
           val word1 = linesp(startIdx + 1)
           val word2 = linesp(startIdx + 2)
@@ -197,7 +197,7 @@ class IRCParser() extends Actor {
       else if (line.contains("!gensentence") || line.contains("!gs")) {
         println("Sending sentence")
         val linesp = line.split(" ")
-        val startIdx = linesp.indexWhere(x => x.contains("!gensentence"))
+        val startIdx = linesp.indexWhere(x => x.contains("!gensentence") || x.contains("!gs"))
         if(linesp.size > startIdx + 2) {
           val word1 = linesp(startIdx + 1)
           val word2 = linesp(startIdx + 2)
@@ -215,7 +215,7 @@ class IRCParser() extends Actor {
       else if (line.contains("!gennicksentence") || line.contains("!gns")) {
         println("Sending sentence")
         val linesp = line.split(" ")
-        val startIdx = linesp.indexWhere(x => x.contains("!gensentence"))
+        val startIdx = linesp.indexWhere(x => x.contains("!gennicksentence") || x.contains("!gns"))
         if(linesp.size > startIdx + 2) {
           val nick = linesp(startIdx + 1)
           val word1 = linesp(startIdx + 2)
@@ -236,7 +236,7 @@ class IRCParser() extends Actor {
       else if (line.contains("!genbiblesentence") || line.contains("!gbs")) {
         println("Sending sentence")
         val linesp = line.split(" ")
-        val startIdx = linesp.indexWhere(x => x.contains("!genbiblesentence"))
+        val startIdx = linesp.indexWhere(x => x.contains("!genbiblesentence") || x.contains("!gbs"))
         if(linesp.size > startIdx + 2) {
           val word1 = linesp(startIdx + 1)
           val word2 = linesp(startIdx + 2)
@@ -255,7 +255,6 @@ class IRCParser() extends Actor {
         sender ! IRC_Response(toChat(Smidbot.genNextPrime().toString, channel))
       }
       else {
-        //sender ! IRC_Response(toChat("penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis penis", "arcbot"))
       }
 
   }
