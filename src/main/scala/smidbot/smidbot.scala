@@ -216,7 +216,7 @@ class IRCParser() extends Actor {
         println("Sending sentence")
         val linesp = line.split(" ")
         val startIdx = linesp.indexWhere(x => x.contains("!gennicksentence") || x.contains("!gns"))
-        if(linesp.size > startIdx + 2) {
+        if(linesp.size > startIdx + 3) {
           val nick = linesp(startIdx + 1)
           val word1 = linesp(startIdx + 2)
           val word2 = linesp(startIdx + 3)
