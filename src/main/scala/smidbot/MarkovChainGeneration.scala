@@ -98,7 +98,7 @@ class MarkovChainGeneration(filename: String) {
       if(linesp.size > 4) {
 
         val msg = linesp.last
-        val nick = linesp(3)
+        val nick = linesp(2)
 
         if(!wordMapByNick.contains(nick)) {
           wordMapByNick.put(nick, new mutable.HashMap[(String, String), mutable.Map[String, Int]]()
