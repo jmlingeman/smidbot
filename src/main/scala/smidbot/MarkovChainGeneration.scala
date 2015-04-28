@@ -144,7 +144,7 @@ class MarkovChainGeneration(filename: String) {
     val wordMap3 = new mutable.HashMap[(String, String, String), mutable.Map[String, Int]]().withDefaultValue(new mutable.HashMap[String, Int]().withDefaultValue(0))
     lines.map { x =>
       val linesp = x.split("\t")
-      val msg = linesp.last
+      val msg = linesp(4)
 
       val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(4).toSeq.filter(x => x.size == 4)
       val triples = if(wl.size > 0)
