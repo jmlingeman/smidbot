@@ -97,7 +97,7 @@ class MarkovChainGeneration(filename: String) {
       val linesp = x.split("\t")
       if(linesp.size > 4) {
 
-        val msg = linesp(3).replaceAll("\\[!@#$%^&*()-_\\+{}[]:;\"<,>./?\\]", "")
+        val msg = linesp(3).replaceAll("\\[!@#$%^&*()-_+\\{\\}\\[\\]:;\"<,>./?\\]", "")
         val nick = linesp(1)
 
         if(!wordMapByNick.contains(nick)) {
@@ -144,23 +144,25 @@ class MarkovChainGeneration(filename: String) {
     val wordMap3 = new mutable.HashMap[(String, String, String), mutable.Map[String, Int]]().withDefaultValue(new mutable.HashMap[String, Int]().withDefaultValue(0))
     lines.map { x =>
       val linesp = x.split("\t")
-      val msg = linesp(3)
+      if(linesp.size > 4) {
+        val msg = linesp(3)
 
-      val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(4).toSeq.filter(x => x.size == 4)
-      val triples = if(wl.size > 0)
-        wl ++ Seq(Seq(wl.last(1), wl.last(2), wl.last(3), SENTENCE_END)) ++ Seq(Seq(SENTENCE_START, wl(0)(0), wl(0)(1), wl(0)(2)))
-      else
-        wl
+        val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(4).toSeq.filter(x => x.size == 4)
+        val triples = if (wl.size > 0)
+          wl ++ Seq(Seq(wl.last(1), wl.last(2), wl.last(3), SENTENCE_END)) ++ Seq(Seq(SENTENCE_START, wl(0)(0), wl(0)(1), wl(0)(2)))
+        else
+          wl
 
-      triples.foreach{x =>
-        //        println(x)
-        val tuple = (x(0), x(1), x(2))
-        if(!wordMap3.contains(tuple)) {
-          wordMap3.put(tuple, new mutable.HashMap[String, Int]().withDefaultValue(0))
+        triples.foreach { x =>
+          //        println(x)
+          val tuple = (x(0), x(1), x(2))
+          if (!wordMap3.contains(tuple)) {
+            wordMap3.put(tuple, new mutable.HashMap[String, Int]().withDefaultValue(0))
+          }
+          wordMap3(tuple).put(x(3), wordMap3(tuple)(x(3)) + 1)
+
+          //        wordMap((x(0), x(1))).put(x(2), wordMap((x(0), x(1)))(x(2)) + 1)
         }
-        wordMap3(tuple).put(x(3), wordMap3(tuple)(x(3)) + 1)
-
-        //        wordMap((x(0), x(1))).put(x(2), wordMap((x(0), x(1)))(x(2)) + 1)
       }
 
     }
