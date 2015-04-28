@@ -64,10 +64,10 @@ class MarkovChainGeneration(filename: String) {
     println("Building word list")
     val wordLists = lines.par.map { x =>
       val linesp = x.split("\t")
-      val msg = linesp.last
+      val msg = linesp.last.replaceAll("[!@#$%^&*()-_+{}[\\]:;\"<,>./?\\]", "")
 //      println(msg)
 //      val msg = if(linesp.length == 8) linesp(6) else linesp.slice(6, linesp.length-2).mkString(" ")
-      val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(3).toSeq
+      val wl = ("\\w+".r findAllIn msg).sliding(3).toSeq
 
 //      println(wl)
 
@@ -97,7 +97,7 @@ class MarkovChainGeneration(filename: String) {
       val linesp = x.split("\t")
       if(linesp.size > 4) {
 
-        val msg = linesp.last
+        val msg = linesp(4).replaceAll("\\[!@#$%^&*()-_+{}[]:;\"<,>./?\\]", "")
         val nick = linesp(2)
 
         if(!wordMapByNick.contains(nick)) {
@@ -106,7 +106,7 @@ class MarkovChainGeneration(filename: String) {
         }
 
 
-        val wl = ("\\b\\w+\\b".r findAllIn msg).sliding(3).toSeq.filter(x => x.size == 3)
+        val wl = ("\\w+".r findAllIn msg).sliding(3).toSeq.filter(x => x.size == 3)
         val triples = if (wl.size > 0)
           wl ++ Seq(Seq(wl.last(1), wl.last(2), SENTENCE_END)) ++ Seq(Seq(SENTENCE_START, wl(0)(0), wl(0)(1)))
         else
@@ -386,7 +386,7 @@ object MarkovChainGeneration {
 
   def main(args: Array[String]) {
 
-    println(mcg.genSentence("holy", "shit"))
+    println(mcg.genSentence(mcg.SENTENCE_START, "isn't"))
     println(mcg.genRandomSentence())
     println(mcg.genRandomSentence())
     println(mcg.genRandomSentence())
