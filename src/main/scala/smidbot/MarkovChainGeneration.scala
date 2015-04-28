@@ -97,7 +97,7 @@ class MarkovChainGeneration(filename: String) {
       val linesp = x.split("\t")
       if(linesp.size > 4) {
 
-        val msg = linesp(3).replaceAll("\\[!@#$%^&*()-_+{}[]:;\"<,>./?\\]", "")
+        val msg = linesp(3).replaceAll("\\[!@#$%^&*()-_\\+{}[]:;\"<,>./?\\]", "")
         val nick = linesp(1)
 
         if(!wordMapByNick.contains(nick)) {
