@@ -21,7 +21,7 @@ class MarkovChainGeneration(filename: String) {
   val wordMapBible = loadGutenberg("data/bible.txt")
 
   val (wordMap, wordMapByNick) = loadAndParseAlexLog(filename)
-  val wordMap3 = loadAndParseAlexLog3(filename)
+  //val wordMap3 = loadAndParseAlexLog3(filename)
 
   def dictionaryLookup(word : String) = {
     if(dictionary.keySet.contains(word)) {
@@ -153,6 +153,7 @@ class MarkovChainGeneration(filename: String) {
 
     file.close()
 
+    println("Finished")
     (wordMap, wordMapByNick)
   }
 
@@ -312,47 +313,47 @@ class MarkovChainGeneration(filename: String) {
     sentence
   }
 
-  def genSentence3(w1: String, w2: String, w3: String, maxChars:Int = 200): String = {
+  //def genSentence3(w1: String, w2: String, w3: String, maxChars:Int = 200): String = {
 
-    var sentence = if(w1 != SENTENCE_START) w1 + " " else w2 + " "
-    var lastToken = w1
-    var middleToken = w2
-    var selectedToken = w3
-    while(selectedToken != SENTENCE_END && sentence.size < maxChars) {
-      //      lastToken = selectedToken
-      if(selectedToken != SENTENCE_START)
-        sentence = sentence + selectedToken + " "
-      val newTokens = wordMap3((dictionaryLookup(lastToken), dictionaryLookup(middleToken), dictionaryLookup(selectedToken)))
-      if(newTokens.size == 0) {
-        selectedToken = SENTENCE_END
-      } else {
-        lastToken = middleToken
-        middleToken = selectedToken
-        val sum = newTokens.map(x => x._2).sum
-        val idx = random.nextInt(sum) + 1
+    //var sentence = if(w1 != SENTENCE_START) w1 + " " else w2 + " "
+    //var lastToken = w1
+    //var middleToken = w2
+    //var selectedToken = w3
+    //while(selectedToken != SENTENCE_END && sentence.size < maxChars) {
+      ////      lastToken = selectedToken
+      //if(selectedToken != SENTENCE_START)
+        //sentence = sentence + selectedToken + " "
+      //val newTokens = wordMap3((dictionaryLookup(lastToken), dictionaryLookup(middleToken), dictionaryLookup(selectedToken)))
+      //if(newTokens.size == 0) {
+        //selectedToken = SENTENCE_END
+      //} else {
+        //lastToken = middleToken
+        //middleToken = selectedToken
+        //val sum = newTokens.map(x => x._2).sum
+        //val idx = random.nextInt(sum) + 1
 
-        //        println(sum, idx, newTokens)
+        ////        println(sum, idx, newTokens)
 
-        // Now have to map this idx to a word
-        var count = 0
-        var token = ""
-        var lastIdx = 0
-        val t = newTokens.toStream.takeWhile(_ => count < idx).foreach{
-          x =>
-            count += x._2
-            //            if(count < idx)
-            token = revDictionaryLookup(x._1)
-        }
+        //// Now have to map this idx to a word
+        //var count = 0
+        //var token = ""
+        //var lastIdx = 0
+        //val t = newTokens.toStream.takeWhile(_ => count < idx).foreach{
+          //x =>
+            //count += x._2
+            ////            if(count < idx)
+            //token = revDictionaryLookup(x._1)
+        //}
 
-        //        println(count)
+        ////        println(count)
 
-        selectedToken = token
-      }
+        //selectedToken = token
+      //}
 
-    }
+    //}
 
-    sentence
-  }
+    //sentence
+  //}
 
   def getStartingWords(): (Int, Int) = {
     val startingWords = wordMap.keys.filter(x => x._1 == dictionaryLookup(SENTENCE_START))
@@ -372,11 +373,11 @@ class MarkovChainGeneration(filename: String) {
     words
   }
 
-  def getStartingWords3(): (Int, Int, Int) = {
-    val startingWords = wordMap3.keys.filter(x => x._1 == dictionaryLookup(SENTENCE_START))
-    val words = startingWords.toSeq(random.nextInt(startingWords.size))
-    words
-  }
+  //def getStartingWords3(): (Int, Int, Int) = {
+    //val startingWords = wordMap3.keys.filter(x => x._1 == dictionaryLookup(SENTENCE_START))
+    //val words = startingWords.toSeq(random.nextInt(startingWords.size))
+    //words
+  //}
 
   def genRandomSentence(): String = {
     val words = getStartingWords()
@@ -384,8 +385,10 @@ class MarkovChainGeneration(filename: String) {
   }
 
   def genRandomNickSentence(nick: String): String = {
-    val words = getNickStartingWords(nick)
-    genNickSentence(nick, revDictionaryLookup(words._1), revDictionaryLookup(words._2))
+    if(wordMapByNick.contains(dictionaryLookup(nick))) {
+      val words = getNickStartingWords(nick)
+      genNickSentence(nick, revDictionaryLookup(words._1), revDictionaryLookup(words._2))
+    } else { "" }
   }
 
   def genRandomNick(): String = {
@@ -397,10 +400,10 @@ class MarkovChainGeneration(filename: String) {
     genBibleSentence(revDictionaryLookup(words._1), revDictionaryLookup(words._2))
   }
 
-  def genRandomSentence3(): String = {
-    val words = getStartingWords3()
-    genSentence3(revDictionaryLookup(words._1), revDictionaryLookup(words._2), revDictionaryLookup(words._3))
-  }
+  //def genRandomSentence3(): String = {
+    //val words = getStartingWords3()
+    //genSentence3(revDictionaryLookup(words._1), revDictionaryLookup(words._2), revDictionaryLookup(words._3))
+  //}
 }
 
 object MarkovChainGeneration {
@@ -414,10 +417,10 @@ object MarkovChainGeneration {
     println(mcg.genRandomSentence())
     println(mcg.genRandomSentence())
 
-    println(mcg.genRandomSentence3())
-    println(mcg.genRandomSentence3())
-    println(mcg.genRandomSentence3())
-    println(mcg.genRandomSentence3())
+    //println(mcg.genRandomSentence3())
+    //println(mcg.genRandomSentence3())
+    //println(mcg.genRandomSentence3())
+    //println(mcg.genRandomSentence3())
 
 //    val length
   }

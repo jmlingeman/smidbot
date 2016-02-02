@@ -139,6 +139,8 @@ class IRCParser() extends Actor {
   def toChat(txt: String, channel: String): String = {
     if (txt == "")
       return "PRIVMSG " + channel + " :Sorry, I can't seem to find that."
+    if (txt.contains("firefly"))
+      return "PRIVMSG " + channel + " :ARGLE BLARGLE"
     val chat = "PRIVMSG " + channel + " :" + txt
     return deHTMLify(chat)
   }
@@ -174,26 +176,26 @@ class IRCParser() extends Actor {
 
         sender ! IRC_Response(toChat(Smidbot.mcg.genSentence(msgSp(idx1), msgSp(idx2)), channel))
       }
-      else if (line.contains("!gensentence3") || line.contains("!gs3")) {
-        println("Sending sentence")
-        val linesp = line.split(" ")
-        val startIdx = linesp.indexWhere(x => x.contains("!gensentence3") || x.contains("!gs3"))
-        if(linesp.size > startIdx + 3) {
-          val word1 = linesp(startIdx + 1)
-          val word2 = linesp(startIdx + 2)
-          val word3 = linesp(startIdx + 3)
+      //else if (line.contains("!gensentence3") || line.contains("!gs3")) {
+        //println("Sending sentence")
+        //val linesp = line.split(" ")
+        //val startIdx = linesp.indexWhere(x => x.contains("!gensentence3") || x.contains("!gs3"))
+        //if(linesp.size > startIdx + 3) {
+          //val word1 = linesp(startIdx + 1)
+          //val word2 = linesp(startIdx + 2)
+          //val word3 = linesp(startIdx + 3)
 
-          sender ! IRC_Response(toChat(Smidbot.mcg.genSentence3(word1, word2, word3), channel))
-        } else if (linesp.size > startIdx + 2) {
-          val word1 = Smidbot.mcg.SENTENCE_START
-          val word2 = linesp(startIdx + 1)
-          val word3 = linesp(startIdx + 2)
+          //sender ! IRC_Response(toChat(Smidbot.mcg.genSentence3(word1, word2, word3), channel))
+        //} else if (linesp.size > startIdx + 2) {
+          //val word1 = Smidbot.mcg.SENTENCE_START
+          //val word2 = linesp(startIdx + 1)
+          //val word3 = linesp(startIdx + 2)
 
-          sender ! IRC_Response(toChat(Smidbot.mcg.genSentence3(word1, word2, word3), channel))
-        } else {
-          sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentence3(), channel))
-        }
-      }
+          //sender ! IRC_Response(toChat(Smidbot.mcg.genSentence3(word1, word2, word3), channel))
+        //} else {
+          //sender ! IRC_Response(toChat(Smidbot.mcg.genRandomSentence3(), channel))
+        //}
+      //}
       else if (line.contains("!gensentence") || line.contains("!gs")) {
         println("Sending sentence")
         val linesp = line.split(" ")

@@ -52,7 +52,7 @@
                             <mainClass>smidbot.Smidbot</mainClass>
                             <!-- jvmArgs are optional -->
                             <jvmArgs>
-                                <jvmArg>-Xmx14G</jvmArg>
+                                <jvmArg>-Xmx18G</jvmArg>
                             </jvmArgs>
                         </launcher>
 
